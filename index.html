@@ -16,7 +16,7 @@
                 <input type="text" placeholder="Search...">
             </div>
             <div class="filter">
-                <input type="radio" name="filter" id="all" value="all">
+                <input type="radio" name="filter" id="all" value="all" checked>
                 <label for="all">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                         <path fill="none" stroke="#000" stroke-width="1.5" d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm0 0v4H6V2h12zm-5 5h2M9 7h6M9 10h6M9 13h6M9 16h3"/>
@@ -41,19 +41,19 @@
         </aside>
         <section id="main-window">
             <div class="pages-header">
-                <div class="add-new-card"></div>
+                <div class="add-new-card" id="add-new-card" onclick="addModal()"></div>
                 <div class="categories">
-                    <input type="radio" name="filter" id="shopping" value="shopping">
+                    <input type="checkbox" name="category" id="shopping" value="shopping" checked>
                     <label for="shopping">shopping</label>
-                    <input type="radio" name="filter" id="business" value="business">
+                    <input type="checkbox" name="category" id="business" value="business" checked>
                     <label for="business">business</label>
-                    <input type="radio" name="filter" id="other" value="other">
+                    <input type="checkbox" name="category" id="other" value="other" checked>
                     <label for="other">other things</label>
                 </div>
             </div>
             <div class="pages-container">
                 <ul class="cards-list">
-                    <li class="card">
+                    <!-- <li class="card">
                         <div class="card-header">
                             <h2 class="card-title">Grocery list</h2>
                             <div class="actions">
@@ -84,7 +84,7 @@
                     </li>
                     <li class="card">
 
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </section>

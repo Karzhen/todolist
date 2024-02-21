@@ -3,6 +3,7 @@
     --main-color: #f4f4f2;
     --card-color: #ffffff;
     --header-color: #4f4f4f;
+    --aside-color: #f7f7f7;
     --main-text-color: #c2c2c2;
     --shopping-color: #a480d2;
     --business-color: #ec79b2;
@@ -14,6 +15,10 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+ul {
+    list-style-type: none;
 }
 
 html {
@@ -40,6 +45,7 @@ main {
     width: 600px;
     /* height: 600px; */
     background-color: var(--main-color);
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
 .left-side {
@@ -47,7 +53,8 @@ main {
     flex-direction: column;
     align-items: flex-start;
     align-self: flex-start;
-    background-color: #f7f7f7;
+    background-color: var(--aside-color);
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
 
 .search {
@@ -78,7 +85,7 @@ main {
     cursor: pointer;
     text-align: left;
     display: flex;
-    gap: 5px;
+    gap: 10px;
     align-items: center;
     position: relative;
     transition: all 1s;
@@ -115,7 +122,7 @@ main {
     stroke: var(--active-filter-color);
 }
 
-input[type="radio"] {
+input[type="radio"], input[type="checkbox"] {
     display: none;
 }
 
@@ -150,10 +157,9 @@ input[type="radio"] {
     transform: translate(-50%, -50%) rotate(90deg);
 }
 
-.aadd-new-card::after {
+.add-new-card::after {
     transform: translate(-50%, -50%);
 }
-
 
 .categories label {
     user-select: none;
@@ -169,15 +175,15 @@ input[type="radio"] {
     transition: all 1s;
 }
 
-input[type="radio"]#shopping + label {
+input[type="checkbox"]#shopping + label {
     background-color: var(--shopping-color);
 }
 
-input[type="radio"]#business + label {
+input[type="checkbox"]#business + label {
     background-color: var(--business-color);
 }
 
-input[type="radio"]#other + label {
+input[type="checkbox"]#other + label {
     background-color: var(--other-color);
 }
 
@@ -208,13 +214,30 @@ input[type="radio"]#other + label {
     left: 0;
     top: 50%;
     transform: translateY(-50%);
-    background-color: darkcyan;
+}
+
+.cardOther::before {
+    background-color: var(--other-color);
+}
+
+.cardBusiness::before {
+    background-color: var(--business-color);
+}
+
+.cardShopping::before {
+    background-color: var(--shopping-color);
 }
 
 .card-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+.actions {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
 }
 
 .actions button {
@@ -242,4 +265,70 @@ ul.card-description li::before {
     color: var(--header-color);
     display: inline-block;
     width: 1em;
+}
+
+
+
+
+
+
+
+.modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: var(--main-color);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 70%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    transition: all .5s;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    margin-bottom: 10px;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea,
+.modal-content button {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.modal-content button {
+    background-color: var(--active-filter-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all .5s;
+}
+
+.modal-content button:hover {
+    background-color: #4CAF50;
 }
