@@ -17,6 +17,10 @@
     padding: 0;
 }
 
+select {
+    font-family: 'Titillium Web', sans-serif;
+}
+
 ul {
     list-style-type: none;
 }
