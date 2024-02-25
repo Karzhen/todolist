@@ -1,81 +1,50 @@
 const newCard = document.getElementById("add-new-card");
 const searchInput = document.getElementById("search-note");
 
-let myModal,
+let modal,
     filters = document.querySelectorAll('input[type="radio"][name="filter"]'),
     currentCategory = document.querySelectorAll('input[type="checkbox"][name="category"]'),
     selectedFilter = 'all',
     selectedCategories = [];
 
 function addModal() {
-    // Создаем элементы модального окна
-    let modal = document.createElement("div");
-    modal.classList.add("modal");
-    modal.id = "myModal";
-    modal.style.display = "block";
-    myModal = modal;
-  
-    let modalContent = document.createElement("div");
-    modalContent.classList.add("modal-content");
-  
-    let closeSpan = document.createElement("span");
-    closeSpan.classList.add("close");
-    closeSpan.id = "closeModal";
-    closeSpan.innerHTML = "&times;";
-    closeSpan.addEventListener('click', function() {
+    let modalHTML = `
+        <div class="modal" id="modal" style="display: block;">
+            <div class="modal-content">
+                <div class="modal-container">
+                    <h2 class="modal-title">Add New Note</h2>
+                    <span class="close" id="closeModal">&times;</span>
+                </div>
+                <input type="text" class="note-title" id="noteTitle" placeholder="Enter title...">
+                <div class="categories">
+                    <input type="checkbox" name="category" class="category-input" id="shopping" value="shopping">
+                    <label for="shopping" class="category-label">shopping</label>
+                    <input type="checkbox" name="category" class="category-input" id="business" value="business">
+                    <label for="business" class="category-label">business</label>
+                    <input type="checkbox" name="category" class="category-input" id="other" value="other">
+                    <label for="other" class="category-label">other things</label>
+                </div>
+                <textarea class="note-text" id="noteText" placeholder="Enter your note..."></textarea>
+                <button class="submit-button" id="submitNote">Submit</button>
+            </div>
+        </div>
+    `;
+
+    document.body.innerHTML += modalHTML;
+    modal = document.getElementById('modal');
+
+    document.getElementById('closeModal').addEventListener('click', function() {
         removeModal(modal);
-        myModal = undefined; 
     });
-  
-    let h2 = document.createElement("h2");
-    h2.textContent = "Add New Note";
-  
-    let inputTitle = document.createElement("input");
-    inputTitle.type = "text";
-    inputTitle.id = "noteTitle";
-    inputTitle.placeholder = "Enter title...";
-  
-    let selectCategory = document.createElement("select");
-    selectCategory.id = "noteCategory";
-  
-    let optionShopping = document.createElement("option");
-    optionShopping.value = "shopping";
-    optionShopping.textContent = "Shopping";
-    selectCategory.appendChild(optionShopping);
-  
-    let optionBusiness = document.createElement("option");
-    optionBusiness.value = "business";
-    optionBusiness.textContent = "Business";
-    selectCategory.appendChild(optionBusiness);
-  
-    let optionOther = document.createElement("option");
-    optionOther.value = "other";
-    optionOther.textContent = "Other things";
-    selectCategory.appendChild(optionOther);
-  
-    let textarea = document.createElement("textarea");
-    textarea.id = "noteText";
-    textarea.placeholder = "Enter your note...";
-  
-    let submitButton = document.createElement("button");
-    submitButton.id = "submitNote";
-    submitButton.textContent = "Submit";
-    submitButton.addEventListener('click', () => createTask());
-  
-    modalContent.appendChild(closeSpan);
-    modalContent.appendChild(h2);
-    modalContent.appendChild(inputTitle);
-    modalContent.appendChild(selectCategory);
-    modalContent.appendChild(textarea);
-    modalContent.appendChild(submitButton);
-  
-    modal.appendChild(modalContent);
-  
-    document.body.appendChild(modal);
+
+    document.getElementById('submitNote').addEventListener('click', () => createTask());
 }
 
+
 function removeModal(removeObject) {
+    // Убрать параметр и удалять глобальную переменную
     document.body.removeChild(removeObject);
+    removeObject = null;
 }
 
 function createTask() {
@@ -157,22 +126,28 @@ function createTask() {
     document.querySelector(".cards-list").appendChild(card);
     saveNoteToLocalStorage(note);
 
-    removeModal(myModal);
+
+    // Обернуть в функцию
+    removeModal(modal);
 }
 
 window.addEventListener('click', (event) => {
-    if (event.target == myModal) {
-        removeModal(myModal);
-        myModal = undefined; 
+    if (event.target === modal) {
+        // Обернуть в функцию
+        removeModal(modal);
+        modal = null;
     }
 })
 
 document.body.addEventListener("keydown", function(event) {
-    if (myModal && typeof myModal === "object" && event.key === "Escape") {
-        removeModal(myModal);
-        myModal = undefined; 
+    if (modal && event.key === "Escape") {
+        // Обернуть в функцию
+        removeModal(modal);
+        modal = null;
     }
 });
+
+// ОСТАНОВКА ----------
 
 filters.forEach(filter => {
     filter.addEventListener('change', function(event) {
@@ -228,7 +203,7 @@ function openCategories(categories) {
         let shouldDisplay = false;
         categories.forEach(category => {
             const categoryClass = categoriesList[category];
-            if (card.classList.contains(categoryClass)) {
+            if (card.classList.contains(categoryClass) && !card.classList.contains('trash')) {
                 shouldDisplay = true;
             }
         });
@@ -237,9 +212,10 @@ function openCategories(categories) {
 }
 
 function removeCard(card, currentFilter, title) {
+    // Упростить код, удалив вложенные if
     if (currentFilter === 'favorites') {
         if (!card.classList.contains('favorites')) {
-            card.style.display = 'none';    
+            card.style.display = 'none';
         }
     }
     if (currentFilter === 'all' || currentFilter === 'favorites') {
@@ -340,7 +316,10 @@ function loadNotesFromLocalStorage() {
 
             const deleteButton = document.createElement("button");
             deleteButton.classList.add("delete-button");
-            deleteButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="#FFF" stroke-width="1.5" d="M5 7H21M9 7V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3M3 7l1 14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2l1-14M9 11h6"/></svg>';
+            deleteButton.innerHTML = `
+            <svg class="right-svg" viewBox="0 0 24 24" width="18" height="18">
+                <use xlink:href="sprites.svg#trash"></use>
+            </svg>`;
             deleteButton.addEventListener('click', function() {
                 card.classList.toggle("trash");
                 removeCard(card, selectedFilter, note.title);
@@ -348,7 +327,10 @@ function loadNotesFromLocalStorage() {
         
             const favoriteButton = document.createElement("button");
             favoriteButton.classList.add("favorite-button");
-            favoriteButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="#FFF" stroke-width="1.5" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+            favoriteButton.innerHTML = `
+            <svg class="right-svg" viewBox="0 0 24 24" width="18" height="18">
+                <use xlink:href="sprites.svg#favorites"></use>
+            </svg>`;
             favoriteButton.addEventListener('click', function() {
                 card.classList.toggle("favorites");
                 removeCard(card, selectedFilter);
