@@ -87,10 +87,11 @@ function submitEvent() {
 
     const newTask = createTask(title, selectedValues, text, false, false);
     saveNoteToLocalStorage(newTask);
+    console.log(newTask)
     removeModal();
 }
 
-function createTask(title, categories, text, isTrash, isFavorite) {
+function createTask(title, categories, text, isTrash = false, isFavorite = false) {
     const note = {
         title: title,
         category: categories,
@@ -99,6 +100,8 @@ function createTask(title, categories, text, isTrash, isFavorite) {
         trash: isTrash,
         favorite: isFavorite
     };
+
+    let newNote = Object.assign({}, note);
 
     const card = document.createElement("li");
     card.classList.add("card");
@@ -121,9 +124,13 @@ function createTask(title, categories, text, isTrash, isFavorite) {
         </svg>`;
     deleteButton.addEventListener('click', function() {
         card.classList.toggle("trash");
-        selectedFilter === 'trash' ? removeCard(card, note.title) : hideCard(card, selectedFilter);
-        // ВЕРНУТЬСЯ И ДОПИСАТЬ
-        selectedFilter === 'trash' ? console.log('card was remove') : updateNoteInLocalStorage(note.title, note);
+        if (selectedFilter === 'trash') {
+            removeCard(card, note.title);
+        } else {
+            newNote.trash = true;
+            hideCard(card, selectedFilter);
+            updateNoteInLocalStorage(note, newNote);
+        }
     });
 
     const favoriteButton = document.createElement("button");
@@ -135,14 +142,14 @@ function createTask(title, categories, text, isTrash, isFavorite) {
     favoriteButton.addEventListener('click', function() {
         card.classList.toggle("favorites");
         const svgElement = favoriteButton.querySelector('.right-svg');
-        if (card.classList.contains("favorites")) {
-            svgElement.classList.add('svg-active');
-        } else {
-            svgElement.classList.remove('svg-active');
-        }
-        hideCard(card, selectedFilter);
-    });
+        svgElement.classList.toggle('svg-active');
 
+        newNote.favorite = !newNote.favorite;
+        console.log(newNote)
+        hideCard(card, selectedFilter);
+        updateNoteInLocalStorage(note, newNote);
+        note.favorite = newNote.favorite;
+    });
 
     actions.appendChild(deleteButton);
     actions.appendChild(favoriteButton);
@@ -261,11 +268,15 @@ function getNotesFromLocalStorage() {
 
 function saveNoteToLocalStorage(note) {
     let notes = getNotesFromLocalStorage();
-    console.log(`Before LS:`)
-    console.log(notes)
-    notes.push(note);
-    console.log(`After LS:`)
-    console.log(notes)
+    const updatedNote = {
+        ...note,
+        index: notes.length
+    };
+    // console.log(`Before LS:`)
+    // console.log(notes)
+    notes.push(updatedNote);
+    // console.log(`After LS:`)
+    // console.log(notes)
     localStorage.setItem('notes', JSON.stringify(notes));
 }
 
@@ -275,17 +286,27 @@ function removeNoteFromLocalStorage(title) {
     localStorage.setItem('notes', JSON.stringify(notes));
 }
 
-function updateNoteInLocalStorage(title, updatedNote) {
+function updateNoteInLocalStorage(note, newNote) {
+    // Получаем все записи из localStorage
     let notes = getNotesFromLocalStorage();
 
-    notes.forEach(note => {
-        if (note.title === title) {
-            Object.assign(note, updatedNote);
-        }
-    });
+    // Ищем запись, которую нужно обновить
+    const index = notes.findIndex(existingNote => existingNote.title === note.title &&
+        existingNote.category.toString() === note.category.toString() &&
+        existingNote.text === note.text &&
+        existingNote.trash === note.trash &&
+        existingNote.favorite === note.favorite);
 
-    localStorage.setItem('notes', JSON.stringify(notes));
+    // Если запись найдена, обновляем ее
+    if (index !== -1) {
+        // Обновляем свойство trash в найденной записи
+        notes[index].trash = newNote.trash;
+        notes[index].favorite = newNote.favorite;
+        // Обновляем запись в localStorage
+        localStorage.setItem('notes', JSON.stringify(notes));
+    }
 }
+
 
 function loadNotesFromLocalStorage() {
     const notes = getNotesFromLocalStorage();
