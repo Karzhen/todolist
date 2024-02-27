@@ -26,7 +26,7 @@ ul {
     list-style-type: none;
 }
 
-.filter-input, .category-input {
+.filter-input, .category-input, .category-check {
     display: none;
 }
 
@@ -182,19 +182,23 @@ main {
     white-space: nowrap;
 }
 
-.category-input#shopping + .category-label {
+.category-input#shopping + .category-label,
+.category-check#shoppingCheck + .category-label {
     --color: var(--shopping-color);
 }
 
-.category-input#business + .category-label {
+.category-input#business + .category-label,
+.category-check#businessCheck + .category-label {
     --color: var(--business-color);
 }
 
-.category-input#other + .category-label {
+.category-input#other + .category-label,
+.category-check#otherCheck + .category-label {
     --color: var(--other-color);
 }
 
-.category-input + .category-label {
+.category-input + .category-label,
+.category-check + .category-label {
     user-select: none;
     cursor: pointer;
     display: inline-block;
@@ -206,13 +210,15 @@ main {
     transition: all .5s;
 }
 
-.category-input:checked + .category-label {
+.category-input:checked + .category-label,
+.category-check:checked + .category-label {
     border-color: var(--color);
     background-color: var(--color);
     color: var(--card-color);
 }
 
-.category-input:not(:checked) + .category-label {
+.category-input:not(:checked) + .category-label,
+.category-check:not(:checked) + .category-label {
     background-color: transparent;
     color: var(--color);
 }
@@ -238,13 +244,12 @@ main {
 
 
 .card::before {
-    height: 100%;
-    width: 20px;
     content: "";
     position: absolute;
+    top: 0;
+    bottom: 0;
     left: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 20px; /* Ширина элемента в левой части карточки */
 }
 
 .cardOther::before {
@@ -257,6 +262,23 @@ main {
 
 .cardShopping::before {
     background-color: var(--shopping-color);
+}
+
+/* Градиент для случая, когда присутствуют несколько классов */
+.cardBusiness.cardOther::before {
+    background-image: linear-gradient(to bottom, var(--business-color) 0%, var(--business-color) 50%, var(--other-color) 50%, var(--other-color) 100%);
+}
+
+.cardShopping.cardOther::before {
+    background-image: linear-gradient(to bottom, var(--shopping-color) 0%, var(--shopping-color) 50%, var(--other-color) 50%, var(--other-color) 100%);
+}
+
+.cardShopping.cardBusiness::before {
+    background-image: linear-gradient(to bottom, var(--shopping-color) 0%, var(--shopping-color) 50%, var(--business-color) 50%, var(--business-color) 100%);
+}
+
+.cardShopping.cardOther.cardBusiness::before {
+    background-image: linear-gradient(to bottom, var(--shopping-color) 0%, var(--shopping-color) 33%, var(--business-color) 33%, var(--business-color) 66%, var(--other-color) 66%, var(--other-color) 100%);
 }
 
 .card-header {
@@ -281,11 +303,20 @@ main {
     background-color: var(--active-filter-color);
 }
 
+.delete-button:hover .right-svg,
+.favorite-button:hover .right-svg {
+    fill: var(--main-text-color);
+}
+
 .right-svg {
     stroke: var(--card-color);
     stroke-width: 1.5px;
     fill: transparent;
     transition: 0.3s ease-in-out;
+}
+
+.svg-active {
+    fill: var(--card-color);
 }
 
 .card-title {
