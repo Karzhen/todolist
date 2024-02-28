@@ -38,7 +38,7 @@ function addModal() {
                 </div>
                 <input type="text" class="note-title" id="noteTitle" placeholder="Enter title...">
                 <div class="categories">
-                    <input type="checkbox" name="category" class="category-check" id="shoppingCheck" value="shopping">
+                    <input type="checkbox" name="category" class="category-check" id="shoppingCheck" value="shopping" checked>
                     <label for="shoppingCheck" class="category-label">shopping</label>
                     <input type="checkbox" name="category" class="category-check" id="businessCheck" value="business">
                     <label for="businessCheck" class="category-label">business</label>
@@ -184,9 +184,23 @@ function createTask(title, categories, text, isTrash = false, isFavorite = false
     }
     
 
-    const cardDescription = document.createElement("p");
+    const cardDescription = document.createElement("ul");
     cardDescription.classList.add("card-description");
-    cardDescription.textContent = note.text;
+
+    const inputDescription = note.text.split('\n');
+    if (inputDescription.length > 1) {
+        inputDescription.forEach(line => {
+            const listItem = document.createElement("li");
+            listItem.classList.add("description-text");
+            listItem.textContent = line;
+            cardDescription.appendChild(listItem);
+        });
+    } else {
+        const cardDescriptionItem = document.createElement("li");
+        cardDescriptionItem.classList.add("description-text");
+        cardDescriptionItem.textContent = note.text;
+        cardDescription.appendChild(cardDescriptionItem);
+    }
 
     card.appendChild(cardDescription);
 
@@ -356,10 +370,10 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 
     inputChanger(currentCategory, true);
+    const cards = document.querySelectorAll('.card');
 
     searchInput.addEventListener('input', function(event) {
         const searchText = event.target.value.toLowerCase();
-        const cards = document.querySelectorAll('.card');
         function capitalize(word) {
             return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
         }
@@ -385,4 +399,65 @@ document.addEventListener("DOMContentLoaded", function() {
             card.style.display = shouldDisplay ? 'list-item' : 'none';
         });
     });
+
+    cards.forEach(card => {
+        card.addEventListener('click', function(event) {
+            const clickedElement = event.target;
+
+            if (clickedElement.classList.contains('card-title')) {
+                const titleText = card.querySelector('.card-title').textContent;
+                card.querySelector('.card-title').innerHTML = `<input type="text" class="edit-title" value="${titleText}">`;
+
+                const editTitleInput = card.querySelector('.edit-title');
+                editTitleInput.focus(); 
+                editTitleInput.addEventListener('blur', function() {
+                    const newTitle = editTitleInput.value;
+                    card.querySelector('.card-title').textContent = newTitle;
+
+                    // Обновить заголовок в localStorage
+                    console.log(newTitle);
+                });
+            }
+
+            if (clickedElement.classList.contains('description-text')) {
+                const descriptionItems = card.querySelectorAll('.card-description li');
+                let descriptionText = '';
+                descriptionItems.forEach((item, index) => {
+                    descriptionText += item.textContent;
+                    if (index < descriptionItems.length - 1) {
+                        descriptionText += '\n';
+                    }
+                });
+            
+                card.querySelector('.card-description').innerHTML = `<textarea class="edit-description">${descriptionText}</textarea>`;
+            
+                const editDescriptionTextarea = card.querySelector('.edit-description');
+                editDescriptionTextarea.selectionStart = editDescriptionTextarea.value.length;
+
+                editDescriptionTextarea.focus();
+                editDescriptionTextarea.addEventListener('blur', function() {
+                    const newDescription = editDescriptionTextarea.value;
+            
+                    const lines = newDescription.split('\n');
+            
+                    const newDescriptionList = document.createElement('ul');
+                    newDescriptionList.classList.add('card-description');
+                    lines.forEach(line => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('description-text');
+                        listItem.textContent = line;
+                        newDescriptionList.appendChild(listItem);
+                    });
+            
+                    // Заменяем текущий список новым
+                    const currentDescription = card.querySelector('.card-description');
+                    currentDescription.parentNode.replaceChild(newDescriptionList, currentDescription);
+            
+                    // Обновить описание в localStorage
+                    console.log(newDescription);
+                });
+            }
+            
+        })
+    })
 })

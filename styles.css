@@ -235,7 +235,7 @@ main {
 }
 
 .card {
-    cursor: pointer;
+    /* cursor: pointer; */
     width: 100%;
     position: relative;
     background-color: var(--card-color);
@@ -319,15 +319,21 @@ main {
     fill: var(--card-color);
 }
 
-.card-title {
+.card-title,
+.edit-title {
     color: var(--header-color);
     font-size: 24px;
 }
 
-.card-description {
+.card-description,
+.edit-description {
     margin-right: 40px;
     color: var(--main-text-color);
     font-size: 14px;
+}
+
+.edit-description {
+    color: var(--header-color);
 }
 
 ul.card-description li::before {
