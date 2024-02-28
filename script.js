@@ -18,6 +18,16 @@ function capitalize(word) {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
+function toggleFavorite(nodeElement, flag) {
+    const svgElement = nodeElement.querySelector('.favorite-button .right-svg');
+    flag ? svgElement.classList.add('svg-active') : svgElement.classList.remove('svg-active');
+}
+
+function toggleTrash(nodeElement, flag) {
+    const svgElement = nodeElement.querySelector('.favorite-button .right-svg');
+    flag ? svgElement.classList.add('svg-active') : svgElement.classList.remove('svg-active');
+}
+
 function addModal() {
     document.body.innerHTML += `
         <div class="modal" id="modal" style="display: block;">
@@ -141,8 +151,7 @@ function createTask(title, categories, text, isTrash = false, isFavorite = false
         </svg>`;
     favoriteButton.addEventListener('click', function() {
         card.classList.toggle("favorites");
-        const svgElement = favoriteButton.querySelector('.right-svg');
-        svgElement.classList.toggle('svg-active');
+        card.classList.contains('favorites') ? toggleFavorite(card, true) : toggleFavorite(card, false);
 
         newNote.favorite = !newNote.favorite;
         console.log(newNote)
@@ -165,6 +174,15 @@ function createTask(title, categories, text, isTrash = false, isFavorite = false
         }
     });
     note.classes = Array.from(card.classList).toString();
+    if (isTrash === true) {
+        card.classList.add('trash');
+        hideCard(card, selectedFilter);
+    }
+    if (isFavorite === true) {
+        card.classList.add('favorites');
+        toggleFavorite(card, true);
+    }
+    
 
     const cardDescription = document.createElement("p");
     cardDescription.classList.add("card-description");
@@ -315,7 +333,7 @@ function loadNotesFromLocalStorage() {
     if (notes.length > 0) {
         console.log("abracaadbra_")
         notes.forEach(note => {
-            createTask(note.title, note.category, note.text)
+            createTask(note.title, note.category, note.text, note.trash, note.favorite)
         });
     }
 }
