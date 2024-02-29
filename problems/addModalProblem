@@ -1,0 +1,40 @@
+function addModal() {
+    // checkCategoryInputs()
+    document.body.innerHTML += `
+        <div class="modal" id="modal" style="display: block;">
+            <div class="modal-content">
+                <div class="modal-container">
+                    <h2 class="modal-title">Add New Note</h2>
+                    <span class="close" id="closeModal">&times;</span>
+                </div>
+                <input type="text" class="note-title" id="noteTitle" placeholder="Enter title...">
+                <div class="categories">
+                    <input type="checkbox" name="category" class="category-check" id="shoppingCheck" value="shopping" checked>
+                    <label for="shoppingCheck" class="category-label">shopping</label>
+                    <input type="checkbox" name="category" class="category-check" id="businessCheck" value="business">
+                    <label for="businessCheck" class="category-label">business</label>
+                    <input type="checkbox" name="category" class="category-check" id="otherCheck" value="other">
+                    <label for="otherCheck" class="category-label">other things</label>
+                </div>
+                <textarea class="note-text" id="noteText" placeholder="Enter your note..."></textarea>
+                <button class="submit-button" id="submitNote">Submit</button>
+            </div>
+        </div>
+    `;
+    modal = document.getElementById('modal');
+
+    modalCategories = document.querySelectorAll('.modal .category-check');
+    inputChanger(modalCategories, false);
+
+    document.getElementById('closeModal').addEventListener('click', function() {
+        removeModal();
+    });
+
+    document.getElementById('submitNote').addEventListener('click', () => submitEvent());
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            removeModal();
+        }
+    })
+}
